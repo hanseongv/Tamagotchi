@@ -57,18 +57,19 @@ public class Player : MonoBehaviour
             currentDoubleJumpCount++;
 
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
-
+            //rigid.AddForce(new Vector3(0, 1.0f, 0f) * jumpPower);
             animator.SetBool("jump", true);
         }
     }
 
     public void HitJump()
     {
+        rigid.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation; ;
         Debug.Log("히트 점프");
         stateType = StateType.Jump;
 
         rigid.AddForce(Vector3.up * (jumpPower - 3), ForceMode.Force);
-
+        //rigid.AddForce(new Vector3(0, 1.0f, 0f) * jumpPower);
         animator.SetBool("jump", true);
     }
 
@@ -79,6 +80,9 @@ public class Player : MonoBehaviour
             currentDoubleJumpCount = 0;
             stateType = StateType.Idle;
             animator.SetBool("jump", false);
+            //rigid.constraints = RigidbodyConstraints.None;
+
+            rigid.constraints = RigidbodyConstraints.FreezeRotation;
         }
     }
 
