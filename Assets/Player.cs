@@ -62,6 +62,16 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void HitJump()
+    {
+        Debug.Log("히트 점프");
+        stateType = StateType.Jump;
+
+        rigid.AddForce(Vector3.up * (jumpPower - 3), ForceMode.Force);
+
+        animator.SetBool("jump", true);
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Floor")

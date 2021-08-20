@@ -23,11 +23,13 @@ public class Coin : MonoBehaviour
     //        Debug.Log("플레이어 닿음");
     //    }
     //}
+    private int i = 0;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && i < 1)
         {
+            i++;
             Debug.Log("트리거 플레이어 닿음");
             animator.Play("GetCoin");
             //끄기
