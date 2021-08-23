@@ -34,11 +34,11 @@ public class HeadHit : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.CompareTag("Player"))
+        if (collision.collider.CompareTag("Player") && !(player.stateType == Player.StateType.Hit))
         {
             hp--;
             Debug.Log("머리에 맞음");
-            Debug.Log("남은 HP" + hp);
+            //Debug.Log("남은 HP" + hp);
 
             player.HitJump();
             animator.SetTrigger("Hit");

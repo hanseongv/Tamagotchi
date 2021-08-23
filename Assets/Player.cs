@@ -21,7 +21,8 @@ public class Player : MonoBehaviour
     public int doubleJumpCount = 1;
     public int currentDoubleJumpCount = 0;
     public float speed = 1f;
-    public float jumpPower = 4f;
+    public float jumpPower = 6f;
+    public float hitPower = 4f;
     private Animator animator;
     private Rigidbody rigid;
     private Vector3 moveVec;
@@ -45,8 +46,30 @@ public class Player : MonoBehaviour
     private void Update()
     {
         moveVec = Vector3.zero;
+
         GetInput();
         Move();
+        RigidConstraints();
+    }
+
+    //public void Hit()
+    //{
+    //    animator.SetTrigger("Hit");
+    //    rigid.AddForce(transform.forward * hitPower * -1, ForceMode.Impulse);
+    //}
+    public void Hit(Vector3 dis)
+    {
+        rigid.constraints = RigidbodyConstraints.FreezeRotation;
+        stateType = StateType.Hit;
+        animator.SetTrigger("Hit");
+        rigid.AddForce(dis * hitPower, ForceMode.Impulse);
+
+        Invoke("HitWait", 0.1f);
+    }
+
+    private void HitWait()
+    {
+        stateType = StateType.Jump;
     }
 
     private void Jump()
@@ -62,14 +85,17 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void RigidConstraints()
+    {
+    }
+
     public void HitJump()
     {
         rigid.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation; ;
-        Debug.Log("히트 점프");
         stateType = StateType.Jump;
 
         rigid.AddForce(Vector3.up * (jumpPower - 3), ForceMode.Force);
-        //rigid.AddForce(new Vector3(0, 1.0f, 0f) * jumpPower);
+
         animator.SetBool("jump", true);
     }
 
@@ -80,7 +106,6 @@ public class Player : MonoBehaviour
             currentDoubleJumpCount = 0;
             stateType = StateType.Idle;
             animator.SetBool("jump", false);
-            //rigid.constraints = RigidbodyConstraints.None;
 
             rigid.constraints = RigidbodyConstraints.FreezeRotation;
         }
@@ -92,7 +117,8 @@ public class Player : MonoBehaviour
         //transform.Translate(moveVec * speed * Time.deltaTime);
         transform.position += moveVec /** (wDown ? 0.2f : 1f) */* speed * Time.deltaTime;
         transform.LookAt(transform.position + moveVec);
-        if (!(stateType == StateType.Jump))
+
+        if (!(stateType == StateType.Jump) && !(stateType == StateType.Hit))
         {
             if (moveVec != Vector3.zero)
             {
